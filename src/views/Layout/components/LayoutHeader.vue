@@ -1,22 +1,8 @@
 <script setup>
-import {getCategoryAPI} from '@/apis/layout'
-import { onMounted, ref} from 'vue';
-// 创建一个响应式的对象
-const categoryList = ref([])
 
-// 创建一个函数，声明为async：异步。
-const getCategory = async () => {
-  // await 等待一个异步操作的完成
-  const res = await getCategoryAPI()
-  console.log(res)
-  // 将请求得到的首页目录数据给赋值给响应式数据
-  categoryList.value = res.result
-}
-
-// 在声明周期函数onMounted中调用上述创建的函数
-onMounted(()=>{
-  getCategory()
-})
+import { useCategoryStore } from '@/stores/category'
+// 使用pinia中的数据
+const categoryStore = useCategoryStore()
 </script>
 
 <template>
@@ -28,7 +14,10 @@ onMounted(()=>{
       </h1>
       <!-- 使用v-for循环展示categoryList中的数据 -->
       <ul class="app-header-nav">
-        <li class="home" v-for="item in categoryList" :key="item.id">
+        <li class="home">
+          <RouterLink to="/">首页</RouterLink>
+        </li>
+        <li class="home" v-for="item in categoryStore.categoryList" :key="item.id">
           <RouterLink to="/">{{ item.name }}</RouterLink>
         </li>
       </ul>
