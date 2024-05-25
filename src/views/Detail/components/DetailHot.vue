@@ -1,15 +1,30 @@
 <script setup>
 // 获取24小时热榜 
 import {getHotGoodsAPI} from '@/apis/detail'
-import {ref} from 'vue'
+import {ref,computed} from 'vue'
 import { useRoute } from 'vue-router'
+
+// 设计props参数 适配不同的titie
+// type适配不同类型热榜数据
+const props = defineProps({
+  hotType: {
+    type: Number, // 1代表24小时热销榜 2代表周热销榜 3代表总热销榜 可以使用type去适配title和数据列表
+    default: 1
+  }
+})
+
+const TYPEMAP = {
+  1: '24小时热榜',
+  2: '周热榜', 
+}
+const title = computed(() => TYPEMAP[props.hotType])
 
 const hotList = ref([])
 const route = useRoute()
 const getHotList = async () => {
   const res = await getHotGoodsAPI({
     id: route.params.id,
-    type: 1
+    type: props.hotType
   })
   hotList.value = res.result
 }
@@ -20,7 +35,7 @@ getHotList()
 
 <template>
   <div class="goods-hot">
-    <h3>周日榜单</h3>
+    <h3>{{ title }}</h3>
     <!-- 商品区块 -->
     <RouterLink to="/" class="goods-item" v-for="item in hotList" :key="item.id">
       <img :src="item.picture" alt="" />
